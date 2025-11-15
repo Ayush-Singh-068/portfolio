@@ -234,6 +234,34 @@ class _SocialLinks extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
+            'Contact Information',
+            style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                  fontWeight: FontWeight.bold,
+                ),
+          ),
+          const SizedBox(height: 24),
+          _ContactInfo(
+            icon: Icons.email,
+            label: 'Email',
+            value: 'ayushrajavat2018@gmail.com',
+            onTap: () => onLaunchUrl('mailto:ayushrajavat2018@gmail.com'),
+          ),
+          const SizedBox(height: 16),
+          _ContactInfo(
+            icon: Icons.phone,
+            label: 'Phone',
+            value: '+91 9795840010',
+            onTap: () => onLaunchUrl('tel:+919795840010'),
+          ),
+          const SizedBox(height: 16),
+          _ContactInfo(
+            icon: Icons.location_on,
+            label: 'Location',
+            value: 'Kanpur, India',
+            onTap: null,
+          ),
+          const SizedBox(height: 32),
+          Text(
             'Connect with me',
             style: Theme.of(context).textTheme.titleLarge?.copyWith(
                   fontWeight: FontWeight.bold,
@@ -243,8 +271,8 @@ class _SocialLinks extends StatelessWidget {
           _SocialLink(
             icon: FontAwesomeIcons.linkedin,
             label: 'LinkedIn',
-            url: 'https://linkedin.com',
-            onTap: () => onLaunchUrl('https://linkedin.com'),
+            url: 'https://www.linkedin.com/in/ayush-singh-3a0ab2165/',
+            onTap: () => onLaunchUrl('https://www.linkedin.com/in/ayush-singh-3a0ab2165/'),
           ),
           const SizedBox(height: 16),
           _SocialLink(
@@ -253,16 +281,66 @@ class _SocialLinks extends StatelessWidget {
             url: 'https://github.com',
             onTap: () => onLaunchUrl('https://github.com'),
           ),
-          const SizedBox(height: 16),
-          _SocialLink(
-            icon: FontAwesomeIcons.twitter,
-            label: 'Twitter',
-            url: 'https://twitter.com',
-            onTap: () => onLaunchUrl('https://twitter.com'),
-          ),
         ],
       ),
     );
+  }
+}
+
+class _ContactInfo extends StatelessWidget {
+  final IconData icon;
+  final String label;
+  final String value;
+  final VoidCallback? onTap;
+
+  const _ContactInfo({
+    required this.icon,
+    required this.label,
+    required this.value,
+    this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final widget = Padding(
+      padding: const EdgeInsets.all(12),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Icon(icon, color: AppColors.primary, size: 24),
+          const SizedBox(width: 16),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  label,
+                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                        color: AppColors.textSecondary,
+                      ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  value,
+                  style: Theme.of(context).textTheme.bodyLarge,
+                ),
+              ],
+            ),
+          ),
+          if (onTap != null)
+            const Icon(Icons.arrow_forward_ios, size: 16, color: AppColors.textSecondary),
+        ],
+      ),
+    );
+
+    if (onTap != null) {
+      return InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(8),
+        child: widget,
+      );
+    }
+    return widget;
   }
 }
 

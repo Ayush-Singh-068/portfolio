@@ -45,9 +45,10 @@ class HeroSection extends StatelessWidget {
                 horizontal: ResponsiveUtils.isMobile(context) ? 0 : 100,
               ),
               child: Text(
-                'Passionate Flutter developer with expertise in building cross-platform mobile applications. '
-                'I specialize in creating beautiful, performant apps using Flutter, Dart, and native iOS development. '
-                'Always learning and exploring new technologies to deliver exceptional user experiences.',
+                'With over 4+ years of experience as a Flutter Developer, I have a proven track record of delivering exceptional mobile applications. '
+                'My expertise lies in cross-platform development, object-oriented programming, and debugging. '
+                'My passion for creating high-quality products has honed my problem-solving abilities and attention to detail. '
+                'I am a skilled communicator and thrive in both independent and team settings.',
                 style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                       height: 1.6,
                     ),

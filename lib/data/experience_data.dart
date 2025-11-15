@@ -3,27 +3,25 @@ import '../features/experience/models/experience_model.dart';
 class ExperienceData {
   static List<ExperienceModel> get experiences => [
     const ExperienceModel(
-      company: 'Tech Company',
-      role: 'Flutter Developer',
-      startDate: 'Jan 2023',
+      company: 'Calance Software',
+      role: 'SDE-3',
+      startDate: 'May 2024',
       endDate: 'Present',
       achievements: [
-        'Developed and maintained cross-platform mobile applications',
-        'Implemented clean architecture patterns and state management',
-        'Collaborated with design and backend teams',
-        'Optimized app performance and reduced crash rates',
+        'Develop and maintain scalable Flutter applications with a focus on clean architecture',
+        'Implement advanced state management solutions using Riverpod and Flutter Hooks',
+        'Optimize performance and ensure smooth API integrations using Dio and Retrofit',
       ],
     ),
     const ExperienceModel(
-      company: 'Startup Inc',
-      role: 'Mobile Developer',
-      startDate: 'Jun 2021',
-      endDate: 'Dec 2022',
+      company: 'Unthinkable Solutions',
+      role: 'Associate - Software Engineering',
+      startDate: 'Oct 2020',
+      endDate: 'May 2024',
       achievements: [
-        'Built native iOS applications using Swift and Objective-C',
-        'Integrated REST APIs and third-party SDKs',
-        'Participated in code reviews and agile development',
-        'Delivered features on time with high code quality',
+        'Built and deployed Flutter applications for Android and iOS with responsive UI designs',
+        'Integrated REST APIs and managed app state using Provider and BLoC',
+        'Conducted dev-testing and debugging to deliver stable and efficient applications',
       ],
     ),
   ];

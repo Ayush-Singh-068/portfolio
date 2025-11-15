@@ -124,11 +124,21 @@ flutter build apk --release
 flutter build ios --release
 ```
 
+## Projects
+
+The portfolio showcases the following projects:
+
+1. **Nana** - E-commerce app for groceries and daily needs
+2. **North Ladder Customer App** - Product selling/mortgaging application
+3. **Omega** - All-in-one service app with ASR/ML integration
+4. **Smart PBC** - Healthcare records consolidation app
+5. **AtCost** - Simple grocery ordering app
+
+All projects are client projects and do not include source code links. Website links can be added to the `demoUrl` field in `lib/data/projects_data.dart`.
+
 ## Notes
 
 - The contact form is a demo (no backend integration)
-- Replace placeholder URLs in project cards with actual GitHub/demo links
-- Update social media links in the contact section
 - Profile image is optional - a placeholder icon will show if missing
 
 ## License

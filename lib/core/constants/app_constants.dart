@@ -1,6 +1,6 @@
 class AppConstants {
   static const String appName = 'Ayush Portfolio';
-  static const String tagline = 'Flutter Developer | Mobile-first Engineer';
+  static const String tagline = 'Flutter Developer | 4+ Years Experience | Mobile-first Engineer';
   
   static const double desktopBreakpoint = 1200;
   static const double tabletBreakpoint = 768;

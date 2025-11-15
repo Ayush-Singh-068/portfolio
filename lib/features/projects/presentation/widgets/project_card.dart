@@ -67,30 +67,30 @@ class ProjectCard extends StatelessWidget {
           ),
           const Spacer(),
           const SizedBox(height: 16),
-          Row(
-            children: [
-              Expanded(
-                child: CustomButton(
-                  text: 'View Code',
-                  icon: Icons.code,
-                  onPressed: project.codeUrl != null
-                      ? () => _launchUrl(project.codeUrl)
-                      : null,
-                ),
-              ),
-              if (project.demoUrl != null) ...[
-                const SizedBox(width: 12),
-                Expanded(
-                  child: CustomButton(
-                    text: 'Live Demo',
-                    icon: Icons.open_in_new,
-                    isOutlined: true,
-                    onPressed: () => _launchUrl(project.demoUrl),
+          if (project.codeUrl != null || project.demoUrl != null)
+            Row(
+              children: [
+                if (project.codeUrl != null) ...[
+                  Expanded(
+                    child: CustomButton(
+                      text: 'View Code',
+                      icon: Icons.code,
+                      onPressed: () => _launchUrl(project.codeUrl),
+                    ),
                   ),
-                ),
+                  if (project.demoUrl != null) const SizedBox(width: 12),
+                ],
+                if (project.demoUrl != null)
+                  Expanded(
+                    child: CustomButton(
+                      text: 'Visit Website',
+                      icon: Icons.open_in_new,
+                      isOutlined: project.codeUrl != null,
+                      onPressed: () => _launchUrl(project.demoUrl),
+                    ),
+                  ),
               ],
-            ],
-          ),
+            ),
         ],
       ),
     );
