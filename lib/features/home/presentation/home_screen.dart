@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'dart:ui';
 import 'package:flutter_hooks/flutter_hooks.dart';
+import 'dart:ui';
 import '../../../../core/constants/responsive_utils.dart';
 import '../../../../core/constants/app_constants.dart';
 import '../../../../core/theme/app_colors.dart';
@@ -103,50 +103,69 @@ class _NavBar extends HookWidget {
   Widget build(BuildContext context) {
     final scrollOffset = useState(0.0);
     final activeSection = useState<String>('Home');
+    final screenHeight = MediaQuery.of(context).size.height;
+    final lastScrollTime = useRef<DateTime>(DateTime.now());
+    final lastActiveSectionCheck = useRef<DateTime>(DateTime.now());
 
     useEffect(() {
       void onScroll() {
-        scrollOffset.value = scrollController.offset;
+        final now = DateTime.now();
+        final timeSinceLastUpdate = now.difference(lastScrollTime.value).inMilliseconds;
         
-        // Determine active section based on scroll position
-        final keys = [
-          ('Home', homeKey),
-          ('Skills', skillsKey),
-          ('Projects', projectsKey),
-          ('Experience', experienceKey),
-          ('Contact', contactKey),
-        ];
+        // Throttle scroll offset updates
+        if (timeSinceLastUpdate >= AppConstants.scrollThrottleMs) {
+          scrollOffset.value = scrollController.offset;
+          lastScrollTime.value = now;
+        }
         
-        for (final entry in keys) {
-          final key = entry.$2;
-          final context = key.currentContext;
-          if (context != null) {
-            final renderObject = context.findRenderObject();
-            if (renderObject is RenderBox) {
-              final position = renderObject.localToGlobal(Offset.zero);
-              final screenHeight = MediaQuery.of(context).size.height;
-              if (position.dy <= screenHeight * 0.3 && position.dy >= -100) {
-                activeSection.value = entry.$1;
-                break;
+        // Throttle active section detection (check less frequently)
+        final timeSinceLastSectionCheck = now.difference(lastActiveSectionCheck.value).inMilliseconds;
+        if (timeSinceLastSectionCheck >= AppConstants.scrollThrottleMs * 2) {
+          // Determine active section based on scroll position
+          final keys = [
+            ('Home', homeKey),
+            ('Skills', skillsKey),
+            ('Projects', projectsKey),
+            ('Experience', experienceKey),
+            ('Contact', contactKey),
+          ];
+          
+          // Cache screen height to avoid MediaQuery lookup
+          final threshold = screenHeight * AppConstants.activeSectionThreshold;
+          
+          for (final entry in keys) {
+            final key = entry.$2;
+            final keyContext = key.currentContext;
+            if (keyContext != null) {
+              final renderObject = keyContext.findRenderObject();
+              if (renderObject is RenderBox) {
+                final position = renderObject.localToGlobal(Offset.zero);
+                if (position.dy <= threshold && position.dy >= AppConstants.activeSectionTopOffset) {
+                  if (activeSection.value != entry.$1) {
+                    activeSection.value = entry.$1;
+                  }
+                  break;
+                }
               }
             }
           }
+          lastActiveSectionCheck.value = now;
         }
       }
       scrollController.addListener(onScroll);
       return () => scrollController.removeListener(onScroll);
-    }, [scrollController]);
+    }, [scrollController, screenHeight]);
 
     // Show navbar initially, hide only when at very top
     final shouldShowNavbar = scrollOffset.value >= 0;
-    final scrollProgress = scrollOffset.value.clamp(0.0, 200.0) / 200.0;
-    final blurIntensity = (15.0 + (scrollProgress * 15.0)).clamp(15.0, 30.0);
+    final scrollProgress = scrollOffset.value.clamp(0.0, AppConstants.scrollProgressMax) / AppConstants.scrollProgressMax;
+    final blurIntensity = (AppConstants.navbarBlurMin + (scrollProgress * (AppConstants.navbarBlurMax - AppConstants.navbarBlurMin))).clamp(AppConstants.navbarBlurMin, AppConstants.navbarBlurMax);
     final borderOpacity = scrollProgress.clamp(0.0, 1.0);
 
     return AnimatedPositioned(
       duration: AppConstants.animationNormal,
       curve: Curves.easeOutCubic,
-      top: shouldShowNavbar ? 0 : -80,
+      top: shouldShowNavbar ? 0 : AppConstants.navbarHideOffset,
       left: 0,
       right: 0,
       child: SafeArea(
@@ -159,7 +178,7 @@ class _NavBar extends HookWidget {
                 return Container(
                   height: 3,
                   width: double.infinity,
-                  color: AppColors.surface.withOpacity(0.3),
+                  color: AppColors.surface.withValues(alpha: 0.3),
                   child: Stack(
                     children: [
                       AnimatedContainer(
@@ -175,7 +194,7 @@ class _NavBar extends HookWidget {
                           ),
                           boxShadow: [
                             BoxShadow(
-                              color: AppColors.primary.withOpacity(0.6),
+                              color: AppColors.primary.withValues(alpha: 0.6),
                               blurRadius: 4,
                               spreadRadius: 0,
                             ),
@@ -191,7 +210,7 @@ class _NavBar extends HookWidget {
               child: BackdropFilter(
                 filter: ImageFilter.blur(sigmaX: blurIntensity, sigmaY: blurIntensity),
                 child: Container(
-                  height: 72,
+                  height: AppConstants.navbarHeight,
                   padding: EdgeInsets.symmetric(
                     horizontal: ResponsiveUtils.getPadding(context),
                   ),
@@ -200,25 +219,25 @@ class _NavBar extends HookWidget {
                       begin: Alignment.topLeft,
                       end: Alignment.bottomRight,
                       colors: [
-                        AppColors.surface.withOpacity(0.85),
-                        AppColors.surface.withOpacity(0.75),
+                        AppColors.surface.withValues(alpha: 0.85),
+                        AppColors.surface.withValues(alpha: 0.75),
                       ],
                     ),
                     border: Border(
                       bottom: BorderSide(
-                        color: AppColors.primary.withOpacity(0.3 * borderOpacity),
+                        color: AppColors.primary.withValues(alpha: 0.3 * borderOpacity),
                         width: 1.5,
                       ),
                     ),
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.black.withOpacity(0.3),
+                        color: Colors.black.withValues(alpha: 0.3),
                         blurRadius: 40,
                         offset: const Offset(0, 8),
                         spreadRadius: -5,
                       ),
                       BoxShadow(
-                        color: AppColors.primary.withOpacity(0.15 * borderOpacity),
+                        color: AppColors.primary.withValues(alpha: 0.15 * borderOpacity),
                         blurRadius: 20,
                         offset: const Offset(0, 4),
                         spreadRadius: 0,
@@ -295,7 +314,7 @@ class _NavBar extends HookWidget {
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(8),
                             border: Border.all(
-                              color: AppColors.primary.withOpacity(0.3),
+                              color: AppColors.primary.withValues(alpha: 0.3),
                               width: 1,
                             ),
                           ),
@@ -473,7 +492,7 @@ class _NavItemState extends State<_NavItem>
                 style: Theme.of(context).textTheme.labelLarge?.copyWith(
                       color: isActiveOrHovered
                           ? AppColors.primary
-                          : AppColors.textPrimary.withOpacity(0.7),
+                          : AppColors.textPrimary.withValues(alpha: 0.7),
                       fontWeight: isActiveOrHovered ? FontWeight.w700 : FontWeight.w500,
                       fontSize: AppConstants.fontSizeBase,
                     ) ??
@@ -481,7 +500,7 @@ class _NavItemState extends State<_NavItem>
                       fontSize: AppConstants.fontSizeBase,
                       color: isActiveOrHovered
                           ? AppColors.primary
-                          : AppColors.textPrimary.withOpacity(0.7),
+                          : AppColors.textPrimary.withValues(alpha: 0.7),
                       fontWeight: isActiveOrHovered ? FontWeight.w700 : FontWeight.w500,
                     ),
                 child: Text(widget.text),
@@ -503,7 +522,7 @@ class _NavItemState extends State<_NavItem>
                       borderRadius: BorderRadius.circular(2),
                       boxShadow: [
                         BoxShadow(
-                          color: AppColors.primary.withOpacity(0.6 * _underlineAnimation.value),
+                          color: AppColors.primary.withValues(alpha: 0.6 * _underlineAnimation.value),
                           blurRadius: 6 * _underlineAnimation.value,
                           spreadRadius: 0,
                         ),
@@ -540,7 +559,7 @@ class _MobileNavItem extends StatelessWidget {
         padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
         decoration: BoxDecoration(
           color: isActive
-              ? AppColors.primary.withOpacity(0.15)
+              ? AppColors.primary.withValues(alpha: 0.15)
               : Colors.transparent,
           borderRadius: BorderRadius.circular(8),
         ),

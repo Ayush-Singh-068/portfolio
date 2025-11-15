@@ -114,7 +114,7 @@ class AnimatedEntrance extends HookWidget {
           ),
         );
       },
-      child: this.child,
+      child: child,
     );
   }
 }

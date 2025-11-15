@@ -95,26 +95,26 @@ class _GlassContainerState extends State<GlassContainer>
                     end: Alignment.bottomRight,
                     colors: [
                       AppColors.glassBackground,
-                      AppColors.glassBackground.withOpacity(0.05),
+                      AppColors.glassBackground.withValues(alpha: 0.05),
                     ],
                   ),
                   borderRadius: BorderRadius.circular(radius),
                   border: Border.all(
-                    color: AppColors.glassBorder.withOpacity(
-                      0.5 + (0.5 * _glowAnimation.value),
+                    color: AppColors.glassBorder.withValues(
+                      alpha: 0.5 + (0.5 * _glowAnimation.value),
                     ),
                     width: _borderAnimation.value,
                   ),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withOpacity(0.1 + (0.05 * _glowAnimation.value)),
+                      color: Colors.black.withValues(alpha: 0.1 + (0.05 * _glowAnimation.value)),
                       blurRadius: 24 + (8 * _glowAnimation.value),
                       offset: Offset(0, 12 + (4 * _glowAnimation.value)),
                       spreadRadius: -4,
                     ),
                     if (_isHovered) ...[
                       BoxShadow(
-                        color: Colors.white.withOpacity(0.05 * _glowAnimation.value),
+                        color: Colors.white.withValues(alpha: 0.05 * _glowAnimation.value),
                         blurRadius: 15 * _glowAnimation.value,
                         spreadRadius: 0,
                         offset: Offset(0, 6 * _glowAnimation.value),

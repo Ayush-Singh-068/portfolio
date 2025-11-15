@@ -60,21 +60,26 @@ class _ProjectCardState extends State<ProjectCard>
 
   Future<void> _launchUrl(String? url) async {
     if (url == null) return;
-    final uri = Uri.parse(url);
-    if (await canLaunchUrl(uri)) {
-      await launchUrl(uri, mode: LaunchMode.externalApplication);
+    try {
+      final uri = Uri.parse(url);
+      if (await canLaunchUrl(uri)) {
+        await launchUrl(uri, mode: LaunchMode.externalApplication);
+      }
+    } catch (e) {
+      // Silently handle URL launch errors
+      debugPrint('Error launching URL: $e');
     }
   }
 
   bool get _shouldShowReadMore {
-    return widget.project.description.length > 250;
+    return widget.project.description.length > AppConstants.projectDescriptionMaxLength;
   }
 
   String get _displayDescription {
     if (!_shouldShowReadMore || _isExpanded) {
       return widget.project.description;
     }
-    return '${widget.project.description.substring(0, 200)}...';
+    return '${widget.project.description.substring(0, AppConstants.projectDescriptionPreviewLength)}...';
   }
 
   @override
@@ -111,13 +116,13 @@ class _ProjectCardState extends State<ProjectCard>
                   borderRadius: BorderRadius.circular(AppConstants.radiusLarge),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.white.withOpacity(0.08 * _glowAnimation.value),
+                      color: Colors.white.withValues(alpha: 0.08 * _glowAnimation.value),
                       blurRadius: 25 * _glowAnimation.value,
                       spreadRadius: 0,
                       offset: Offset(0, 12 * _elevationAnimation.value),
                     ),
                     BoxShadow(
-                      color: AppColors.primary.withOpacity(0.15 * _glowAnimation.value),
+                      color: AppColors.primary.withValues(alpha: 0.15 * _glowAnimation.value),
                       blurRadius: 20 * _glowAnimation.value,
                       spreadRadius: -5,
                       offset: Offset(0, 8 * _elevationAnimation.value),
@@ -251,10 +256,10 @@ class _TechBadgeState extends State<_TechBadge> {
         duration: AppConstants.animationFast,
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
         decoration: BoxDecoration(
-          color: AppColors.primary.withOpacity(_isHovered ? 0.18 : 0.12),
+          color: AppColors.primary.withValues(alpha: _isHovered ? 0.18 : 0.12),
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
-            color: AppColors.primary.withOpacity(0.25),
+            color: AppColors.primary.withValues(alpha: 0.25),
             width: 1,
           ),
         ),

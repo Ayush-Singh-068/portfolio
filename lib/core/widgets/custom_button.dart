@@ -103,20 +103,20 @@ class _CustomButtonState extends State<CustomButton>
                   boxShadow: [
                     if (!widget.isOutlined) ...[
                       BoxShadow(
-                        color: AppColors.primary.withOpacity(0.4 + (0.2 * _glowAnimation.value)),
+                        color: AppColors.primary.withValues(alpha: 0.4 + (0.2 * _glowAnimation.value)),
                         blurRadius: 15 + (10 * _glowAnimation.value),
                         spreadRadius: 0,
                         offset: Offset(0, 6 + (4 * _glowAnimation.value)),
                       ),
                       BoxShadow(
-                        color: AppColors.secondary.withOpacity(0.2 * _glowAnimation.value),
+                        color: AppColors.secondary.withValues(alpha: 0.2 * _glowAnimation.value),
                         blurRadius: 10 * _glowAnimation.value,
                         spreadRadius: -2,
                         offset: Offset(0, 4 * _glowAnimation.value),
                       ),
                     ] else if (_isHovered) ...[
                       BoxShadow(
-                        color: AppColors.primary.withOpacity(0.3 * _glowAnimation.value),
+                        color: AppColors.primary.withValues(alpha: 0.3 * _glowAnimation.value),
                         blurRadius: 12 * _glowAnimation.value,
                         spreadRadius: 0,
                         offset: Offset(0, 4 * _glowAnimation.value),
@@ -130,11 +130,11 @@ class _CustomButtonState extends State<CustomButton>
                     onTap: widget.onPressed,
                     borderRadius: BorderRadius.circular(height / 2),
                     splashColor: widget.isOutlined
-                        ? AppColors.primary.withOpacity(0.1)
-                        : Colors.white.withOpacity(0.2),
+                        ? AppColors.primary.withValues(alpha: 0.1)
+                        : Colors.white.withValues(alpha: 0.2),
                     highlightColor: widget.isOutlined
-                        ? AppColors.primary.withOpacity(0.05)
-                        : Colors.white.withOpacity(0.1),
+                        ? AppColors.primary.withValues(alpha: 0.05)
+                        : Colors.white.withValues(alpha: 0.1),
                     child: Container(
                       padding: EdgeInsets.symmetric(horizontal: AppConstants.spacing24),
                       child: Row(

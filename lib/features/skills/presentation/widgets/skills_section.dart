@@ -152,13 +152,13 @@ class _SkillCardState extends State<_SkillCard>
                   borderRadius: BorderRadius.circular(AppConstants.radiusLarge),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.white.withOpacity(0.06 * _elevationAnimation.value),
+                      color: Colors.white.withValues(alpha: 0.06 * _elevationAnimation.value),
                       blurRadius: 18 * _elevationAnimation.value,
                       spreadRadius: 0,
                       offset: Offset(0, 8 * _elevationAnimation.value),
                     ),
                     BoxShadow(
-                      color: AppColors.primary.withOpacity(0.1 * _elevationAnimation.value),
+                      color: AppColors.primary.withValues(alpha: 0.1 * _elevationAnimation.value),
                       blurRadius: 15 * _elevationAnimation.value,
                       spreadRadius: -3,
                       offset: Offset(0, 6 * _elevationAnimation.value),

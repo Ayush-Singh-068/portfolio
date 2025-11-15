@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
-import 'dart:ui';
 import '../../../../core/widgets/animated_section.dart';
 import '../../../../core/widgets/animated_text_reveal.dart';
 import '../../../../core/widgets/scroll_reveal_animation.dart';
@@ -32,13 +31,13 @@ class HeroSection extends HookWidget {
       builder: (context, constraints) {
         final padding = ResponsiveUtils.getPadding(context);
         final profileSize = ResponsiveUtils.isDesktop(context)
-            ? 220.0
+            ? AppConstants.profileImageSizeDesktop
             : ResponsiveUtils.isTablet(context)
-                ? 200.0
-                : 180.0;
+                ? AppConstants.profileImageSizeTablet
+                : AppConstants.profileImageSizeMobile;
 
         // Parallax effect based on scroll
-        final parallaxOffset = scrollOffset.value * 0.5;
+        final parallaxOffset = scrollOffset.value * AppConstants.profileImageParallaxFactor;
 
         return Container(
           width: double.infinity,
@@ -173,7 +172,7 @@ class _BackgroundShapesPainter extends CustomPainter {
   void paint(Canvas canvas, Size size) {
     final paint = Paint()
       ..style = PaintingStyle.fill
-      ..color = AppColors.primary.withOpacity(0.05);
+      ..color = AppColors.primary.withValues(alpha: 0.05);
 
     // Animated gradient circles
     final centerX = size.width / 2;
@@ -186,7 +185,7 @@ class _BackgroundShapesPainter extends CustomPainter {
         centerY * 0.3 + parallaxOffset * 0.15,
       ),
       100 + (animationValue * 30),
-      paint..color = AppColors.primary.withOpacity(0.03),
+      paint..color = AppColors.primary.withValues(alpha: 0.03),
     );
 
     // Circle 2 - bottom right
@@ -196,7 +195,7 @@ class _BackgroundShapesPainter extends CustomPainter {
         centerY * 1.3 - parallaxOffset * 0.15,
       ),
       120 + (animationValue * 40),
-      paint..color = AppColors.secondary.withOpacity(0.03),
+      paint..color = AppColors.secondary.withValues(alpha: 0.03),
     );
 
     // Circle 3 - top right
@@ -206,7 +205,7 @@ class _BackgroundShapesPainter extends CustomPainter {
         centerY * 0.2 + parallaxOffset * 0.1,
       ),
       80 + (animationValue * 20),
-      paint..color = AppColors.accent.withOpacity(0.02),
+      paint..color = AppColors.accent.withValues(alpha: 0.02),
     );
   }
 
@@ -243,17 +242,17 @@ class _ProfileImageState extends State<_ProfileImage>
   void initState() {
     super.initState();
     _pulseController = AnimationController(
-      duration: const Duration(seconds: 3),
+      duration: AppConstants.profilePulseDuration,
       vsync: this,
     )..repeat(reverse: true);
 
     _rotateController = AnimationController(
-      duration: const Duration(seconds: 20),
+      duration: AppConstants.profileRotateDuration,
       vsync: this,
     )..repeat();
 
     _floatController = AnimationController(
-      duration: const Duration(seconds: 4),
+      duration: AppConstants.profileFloatDuration,
       vsync: this,
     )..repeat(reverse: true);
 
@@ -271,7 +270,7 @@ class _ProfileImageState extends State<_ProfileImage>
       ),
     );
 
-    _floatAnimation = Tween<double>(begin: -8.0, end: 8.0).animate(
+    _floatAnimation = Tween<double>(begin: -AppConstants.profileImageFloatOffset, end: AppConstants.profileImageFloatOffset).animate(
       CurvedAnimation(
         parent: _floatController,
         curve: Curves.easeInOut,
@@ -297,7 +296,7 @@ class _ProfileImageState extends State<_ProfileImage>
       ]),
       builder: (context, child) {
         return Transform.translate(
-          offset: Offset(0, _floatAnimation.value + widget.parallaxOffset * 0.3),
+          offset: Offset(0, _floatAnimation.value + widget.parallaxOffset * AppConstants.profileImageParallaxFactor * 0.6),
           child: Transform.scale(
             scale: _pulseAnimation.value,
             child: Container(
@@ -312,13 +311,13 @@ class _ProfileImageState extends State<_ProfileImage>
                 ),
                 boxShadow: [
                   BoxShadow(
-                    color: AppColors.primary.withOpacity(0.5),
+                    color: AppColors.primary.withValues(alpha: 0.5),
                     blurRadius: 80,
                     spreadRadius: 0,
                     offset: const Offset(0, 30),
                   ),
                   BoxShadow(
-                    color: AppColors.secondary.withOpacity(0.3),
+                    color: AppColors.secondary.withValues(alpha: 0.3),
                     blurRadius: 60,
                     spreadRadius: -10,
                     offset: const Offset(0, 20),
@@ -338,10 +337,10 @@ class _ProfileImageState extends State<_ProfileImage>
                         shape: BoxShape.circle,
                         gradient: SweepGradient(
                           colors: [
-                            AppColors.primary.withOpacity(0.0),
-                            AppColors.primary.withOpacity(0.3),
-                            AppColors.secondary.withOpacity(0.3),
-                            AppColors.primary.withOpacity(0.0),
+                            AppColors.primary.withValues(alpha: 0.0),
+                            AppColors.primary.withValues(alpha: 0.3),
+                            AppColors.secondary.withValues(alpha: 0.3),
+                            AppColors.primary.withValues(alpha: 0.0),
                           ],
                           stops: const [0.0, 0.3, 0.7, 1.0],
                         ),

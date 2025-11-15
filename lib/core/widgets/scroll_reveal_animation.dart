@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import '../constants/app_constants.dart';
@@ -55,7 +56,8 @@ class ScrollRevealAnimation extends HookWidget {
 
       // Check if widget is in viewport - very lenient check for initial visibility
       // Consider visible if it's anywhere near the viewport
-      final isVisible = position.dy < screenHeight * 1.5 &&
+      final viewportMultiplier = AppConstants.scrollRevealViewportMultiplier;
+      final isVisible = position.dy < screenHeight * viewportMultiplier &&
           position.dy + size.height > -screenHeight * 0.5;
 
       if (isVisible && !hasRevealed.value) {
@@ -74,16 +76,33 @@ class ScrollRevealAnimation extends HookWidget {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         checkVisibility();
         // Also check after a short delay to catch any layout changes
-        Future.delayed(const Duration(milliseconds: 300), () {
+        Future.delayed(AppConstants.scrollRevealInitialDelay, () {
           checkVisibility();
         });
       });
 
-      // Periodic checks to catch scroll events
-      final timer = Stream.periodic(const Duration(milliseconds: 200))
-          .listen((_) => checkVisibility());
+      // Periodic check to catch scroll events (less frequent than before)
+      // This is necessary because NotificationListener may not catch all scroll events
+      StreamSubscription? timerSubscription;
+      final timer = Stream.periodic(AppConstants.scrollRevealCheckInterval)
+          .listen((_) {
+        if (!hasRevealed.value) {
+          checkVisibility();
+        }
+      });
+      timerSubscription = timer;
+      
+      // Cancel timer once revealed (check after a delay to allow async reveal)
+      Future.delayed(const Duration(seconds: 2), () {
+        if (hasRevealed.value) {
+          timerSubscription?.cancel();
+        }
+      });
 
-      return () => timer.cancel();
+      return () {
+        timer.cancel();
+        timerSubscription?.cancel();
+      };
     }, []);
 
     // Create animations based on direction
@@ -125,32 +144,40 @@ class ScrollRevealAnimation extends HookWidget {
           )
         : null;
 
-    return RepaintBoundary(
-      key: key,
-      child: AnimatedBuilder(
-        animation: animationController,
-        builder: (context, child) {
-          return Opacity(
-            opacity: opacityAnimation.value,
-            child: Transform.translate(
-              offset: Offset(
-                direction == RevealDirection.left || direction == RevealDirection.right
-                    ? translateAnimation.value
-                    : 0.0,
-                direction == RevealDirection.up || direction == RevealDirection.down
-                    ? translateAnimation.value
-                    : 0.0,
+    return NotificationListener<ScrollNotification>(
+      onNotification: (notification) {
+        if (!hasRevealed.value) {
+          checkVisibility();
+        }
+        return false;
+      },
+      child: RepaintBoundary(
+        key: key,
+        child: AnimatedBuilder(
+          animation: animationController,
+          builder: (context, child) {
+            return Opacity(
+              opacity: opacityAnimation.value,
+              child: Transform.translate(
+                offset: Offset(
+                  direction == RevealDirection.left || direction == RevealDirection.right
+                      ? translateAnimation.value
+                      : 0.0,
+                  direction == RevealDirection.up || direction == RevealDirection.down
+                      ? translateAnimation.value
+                      : 0.0,
+                ),
+                child: scaleAnimation != null
+                    ? Transform.scale(
+                        scale: scaleAnimation.value,
+                        child: child,
+                      )
+                    : child,
               ),
-              child: scaleAnimation != null
-                  ? Transform.scale(
-                      scale: scaleAnimation.value,
-                      child: child,
-                    )
-                  : child,
-            ),
-          );
-        },
-        child: this.child,
+            );
+          },
+          child: child,
+        ),
       ),
     );
   }

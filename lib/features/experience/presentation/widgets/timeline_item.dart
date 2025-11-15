@@ -89,13 +89,13 @@ class _TimelineItemState extends State<TimelineItem>
                         borderRadius: BorderRadius.circular(AppConstants.radiusLarge),
                         boxShadow: [
                           BoxShadow(
-                            color: Colors.white.withOpacity(0.05 * _glowAnimation.value),
+                            color: Colors.white.withValues(alpha: 0.05 * _glowAnimation.value),
                             blurRadius: 16 * _glowAnimation.value,
                             spreadRadius: 0,
                             offset: Offset(0, 6 * _elevationAnimation.value),
                           ),
                           BoxShadow(
-                            color: AppColors.primary.withOpacity(0.12 * _glowAnimation.value),
+                            color: AppColors.primary.withValues(alpha: 0.12 * _glowAnimation.value),
                             blurRadius: 12 * _glowAnimation.value,
                             spreadRadius: -2,
                             offset: Offset(0, 4 * _elevationAnimation.value),
@@ -209,12 +209,12 @@ class _TimelineIndicatorState extends State<_TimelineIndicator>
   void initState() {
     super.initState();
     _pulseController = AnimationController(
-      duration: const Duration(seconds: 2),
+      duration: AppConstants.timelinePulseDuration,
       vsync: this,
     )..repeat(reverse: true);
 
     _glowController = AnimationController(
-      duration: const Duration(milliseconds: 1500),
+      duration: AppConstants.timelineGlowDuration,
       vsync: this,
     )..repeat();
 
@@ -261,8 +261,8 @@ class _TimelineIndicatorState extends State<_TimelineIndicator>
                   ),
                   boxShadow: [
                     BoxShadow(
-                      color: AppColors.primary.withOpacity(
-                        widget.isHovered ? 0.8 : _glowAnimation.value,
+                      color: AppColors.primary.withValues(
+                        alpha: widget.isHovered ? 0.8 : _glowAnimation.value,
                       ),
                       blurRadius: widget.isHovered ? 16 : 12,
                       spreadRadius: widget.isHovered ? 4 : 2,
@@ -284,8 +284,8 @@ class _TimelineIndicatorState extends State<_TimelineIndicator>
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
                 colors: [
-                  AppColors.primary.withOpacity(widget.isHovered ? 0.8 : 0.4),
-                  AppColors.primary.withOpacity(widget.isHovered ? 0.6 : 0.2),
+                  AppColors.primary.withValues(alpha: widget.isHovered ? 0.8 : 0.4),
+                  AppColors.primary.withValues(alpha: widget.isHovered ? 0.6 : 0.2),
                 ],
               ),
             ),

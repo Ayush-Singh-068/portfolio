@@ -71,7 +71,7 @@ class AnimatedTextField extends HookWidget {
             boxShadow: isFocused.value
                 ? [
                     BoxShadow(
-                      color: AppColors.primary.withOpacity(0.2 * glowAnimation),
+                      color: AppColors.primary.withValues(alpha: 0.2 * glowAnimation),
                       blurRadius: 12 * glowAnimation,
                       spreadRadius: 0,
                       offset: Offset(0, 4 * glowAnimation),

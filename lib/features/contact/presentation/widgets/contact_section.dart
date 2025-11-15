@@ -19,9 +19,14 @@ class ContactSection extends HookConsumerWidget {
   const ContactSection({super.key});
 
   Future<void> _launchUrl(String url) async {
-    final uri = Uri.parse(url);
-    if (await canLaunchUrl(uri)) {
-      await launchUrl(uri, mode: LaunchMode.externalApplication);
+    try {
+      final uri = Uri.parse(url);
+      if (await canLaunchUrl(uri)) {
+        await launchUrl(uri, mode: LaunchMode.externalApplication);
+      }
+    } catch (e) {
+      // Silently handle URL launch errors
+      debugPrint('Error launching URL: $e');
     }
   }
 
@@ -157,7 +162,7 @@ class _ContactForm extends StatelessWidget {
           if (contactState.error != null) ...[
             const SizedBox(height: 16),
             AnimatedTextReveal(
-              text: contactState.error!,
+              text: contactState.error ?? '',
               type: TextRevealType.slideIn,
               delay: Duration.zero,
               duration: AppConstants.animationNormal,
@@ -175,12 +180,12 @@ class _ContactForm extends StatelessWidget {
               child: Container(
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
-                  color: AppColors.success.withOpacity(0.2),
+                  color: AppColors.success.withValues(alpha: 0.2),
                   borderRadius: BorderRadius.circular(AppConstants.radiusMedium),
                   border: Border.all(color: AppColors.success, width: 1.5),
                   boxShadow: [
                     BoxShadow(
-                      color: AppColors.success.withOpacity(0.2),
+                      color: AppColors.success.withValues(alpha: 0.2),
                       blurRadius: 8,
                       spreadRadius: 0,
                     ),
@@ -244,14 +249,14 @@ class _SocialLinks extends StatelessWidget {
           _ContactInfo(
             icon: Icons.email,
             label: 'Email',
-            value: 'ayushrajavat2018@gmail.com',
-            onTap: () => onLaunchUrl('mailto:ayushrajavat2018@gmail.com'),
+            value: AppConstants.contactEmail,
+            onTap: () => onLaunchUrl('mailto:${AppConstants.contactEmail}'),
           ),
           SizedBox(height: AppConstants.spacing16),
           _ContactInfo(
             icon: Icons.location_on,
             label: 'Location',
-            value: 'Kanpur, India',
+            value: AppConstants.contactLocation,
             onTap: null,
           ),
           SizedBox(height: AppConstants.spacing32),
@@ -265,15 +270,15 @@ class _SocialLinks extends StatelessWidget {
           _SocialLink(
             icon: FontAwesomeIcons.linkedin,
             label: 'LinkedIn',
-            url: 'https://www.linkedin.com/in/ayush-singh-3a0ab2165/',
-            onTap: () => onLaunchUrl('https://www.linkedin.com/in/ayush-singh-3a0ab2165/'),
+            url: AppConstants.linkedInUrl,
+            onTap: () => onLaunchUrl(AppConstants.linkedInUrl),
           ),
           SizedBox(height: AppConstants.spacing12),
           _SocialLink(
             icon: FontAwesomeIcons.github,
             label: 'GitHub',
-            url: 'https://github.com',
-            onTap: () => onLaunchUrl('https://github.com'),
+            url: AppConstants.githubUrl,
+            onTap: () => onLaunchUrl(AppConstants.githubUrl),
           ),
         ],
       ),
@@ -352,7 +357,7 @@ class _ContactInfoState extends State<_ContactInfo> {
             duration: AppConstants.animationFast,
             decoration: BoxDecoration(
               color: _isHovered
-                  ? AppColors.primary.withOpacity(0.05)
+                  ? AppColors.primary.withValues(alpha: 0.05)
                   : Colors.transparent,
               borderRadius: BorderRadius.circular(8),
             ),
@@ -405,7 +410,7 @@ class _SocialLinkState extends State<_SocialLink> {
           duration: AppConstants.animationFast,
           decoration: BoxDecoration(
             color: _isHovered
-                ? AppColors.primary.withOpacity(0.05)
+                ? AppColors.primary.withValues(alpha: 0.05)
                 : Colors.transparent,
             borderRadius: BorderRadius.circular(8),
           ),
