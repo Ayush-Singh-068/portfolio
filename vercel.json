@@ -1,6 +1,6 @@
 {
-  "buildCommand": "echo 'No build needed - using pre-built files'",
+  "buildCommand": "./build.sh",
   "outputDirectory": "build/web",
-  "installCommand": "echo 'No install needed'"
+  "installCommand": "echo 'Flutter will be installed in build script'"
 }
 
