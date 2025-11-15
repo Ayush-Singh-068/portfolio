@@ -43,3 +43,8 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+
+# Allow build/web for Vercel deployment (must come after /build/ ignore)
+!/build
+!/build/web
+!/build/web/**
