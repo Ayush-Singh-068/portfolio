@@ -7,6 +7,7 @@ import '../../../../core/widgets/animated_section.dart';
 import '../../../../core/widgets/glass_container.dart';
 import '../../../../core/widgets/custom_button.dart';
 import '../../../../core/constants/responsive_utils.dart';
+import '../../../../core/constants/app_constants.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../viewmodels/contact_viewmodel.dart';
 
@@ -38,19 +39,24 @@ class ContactSection extends HookConsumerWidget {
       return null;
     }, [contactState.isSuccess]);
 
-    return Container(
-      width: double.infinity,
-      padding: EdgeInsets.symmetric(horizontal: padding, vertical: 80),
-      child: AnimatedSection(
-        id: 'contact',
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              'Contact',
-              style: Theme.of(context).textTheme.displaySmall,
-            ),
-            const SizedBox(height: 48),
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        return Container(
+          width: double.infinity,
+          padding: EdgeInsets.symmetric(
+            horizontal: padding,
+            vertical: ResponsiveUtils.getSectionPadding(context),
+          ),
+          child: AnimatedSection(
+            id: 'contact',
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Contact',
+                  style: Theme.of(context).textTheme.displaySmall,
+                ),
+                SizedBox(height: AppConstants.spacing48),
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -68,7 +74,7 @@ class ContactSection extends HookConsumerWidget {
                   ),
                 ),
                 if (!ResponsiveUtils.isMobile(context)) ...[
-                  const SizedBox(width: 48),
+                  SizedBox(width: AppConstants.spacing48),
                   Expanded(
                     child: _SocialLinks(onLaunchUrl: _launchUrl),
                   ),
@@ -76,12 +82,14 @@ class ContactSection extends HookConsumerWidget {
               ],
             ),
             if (ResponsiveUtils.isMobile(context)) ...[
-              const SizedBox(height: 32),
+              SizedBox(height: AppConstants.spacing32),
               _SocialLinks(onLaunchUrl: _launchUrl),
             ],
-          ],
-        ),
-      ),
+              ],
+            ),
+          ),
+        );
+      },
     );
   }
 }
@@ -109,69 +117,83 @@ class _ContactForm extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final cardPadding = ResponsiveUtils.getCardPadding(context);
+    
     return GlassContainer(
-      padding: const EdgeInsets.all(32),
+      padding: EdgeInsets.all(cardPadding * 1.5),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          TextField(
-            controller: nameController,
-            onChanged: onNameChanged,
-            decoration: InputDecoration(
-              labelText: 'Name',
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(8),
-                borderSide: const BorderSide(color: AppColors.surfaceLight),
-              ),
-              enabledBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(8),
-                borderSide: const BorderSide(color: AppColors.surfaceLight),
-              ),
-              focusedBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(8),
-                borderSide: const BorderSide(color: AppColors.primary, width: 2),
-              ),
-            ),
-          ),
-          const SizedBox(height: 16),
-          TextField(
-            controller: emailController,
-            onChanged: onEmailChanged,
-            keyboardType: TextInputType.emailAddress,
-            decoration: InputDecoration(
-              labelText: 'Email',
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(8),
-                borderSide: const BorderSide(color: AppColors.surfaceLight),
-              ),
-              enabledBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(8),
-                borderSide: const BorderSide(color: AppColors.surfaceLight),
-              ),
-              focusedBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(8),
-                borderSide: const BorderSide(color: AppColors.primary, width: 2),
+          SizedBox(
+            height: 56,
+            child: TextField(
+              controller: nameController,
+              onChanged: onNameChanged,
+              style: TextStyle(color: AppColors.textPrimary),
+              decoration: InputDecoration(
+                labelText: 'Name',
+                labelStyle: TextStyle(color: AppColors.textSecondary),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(AppConstants.radiusMedium),
+                  borderSide: BorderSide(color: AppColors.surfaceLight, width: 1.5),
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(AppConstants.radiusMedium),
+                  borderSide: BorderSide(color: AppColors.surfaceLight, width: 1.5),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(AppConstants.radiusMedium),
+                  borderSide: BorderSide(color: AppColors.primary, width: 2),
+                ),
               ),
             ),
           ),
-          const SizedBox(height: 16),
+          SizedBox(height: AppConstants.spacing16),
+          SizedBox(
+            height: 56,
+            child: TextField(
+              controller: emailController,
+              onChanged: onEmailChanged,
+              keyboardType: TextInputType.emailAddress,
+              style: TextStyle(color: AppColors.textPrimary),
+              decoration: InputDecoration(
+                labelText: 'Email',
+                labelStyle: TextStyle(color: AppColors.textSecondary),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(AppConstants.radiusMedium),
+                  borderSide: BorderSide(color: AppColors.surfaceLight, width: 1.5),
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(AppConstants.radiusMedium),
+                  borderSide: BorderSide(color: AppColors.surfaceLight, width: 1.5),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(AppConstants.radiusMedium),
+                  borderSide: BorderSide(color: AppColors.primary, width: 2),
+                ),
+              ),
+            ),
+          ),
+          SizedBox(height: AppConstants.spacing16),
           TextField(
             controller: messageController,
             onChanged: onMessageChanged,
             maxLines: 6,
+            style: TextStyle(color: AppColors.textPrimary),
             decoration: InputDecoration(
               labelText: 'Message',
+              labelStyle: TextStyle(color: AppColors.textSecondary),
               border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(8),
-                borderSide: const BorderSide(color: AppColors.surfaceLight),
+                borderRadius: BorderRadius.circular(AppConstants.radiusMedium),
+                borderSide: BorderSide(color: AppColors.surfaceLight, width: 1.5),
               ),
               enabledBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(8),
-                borderSide: const BorderSide(color: AppColors.surfaceLight),
+                borderRadius: BorderRadius.circular(AppConstants.radiusMedium),
+                borderSide: BorderSide(color: AppColors.surfaceLight, width: 1.5),
               ),
               focusedBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(8),
-                borderSide: const BorderSide(color: AppColors.primary, width: 2),
+                borderRadius: BorderRadius.circular(AppConstants.radiusMedium),
+                borderSide: BorderSide(color: AppColors.primary, width: 2),
               ),
             ),
           ),
@@ -209,11 +231,15 @@ class _ContactForm extends StatelessWidget {
               ),
             ),
           ],
-          const SizedBox(height: 24),
-          CustomButton(
-            text: contactState.isLoading ? 'Sending...' : 'Send Message',
-            icon: Icons.send,
-            onPressed: contactState.isLoading ? null : onSubmit,
+          SizedBox(height: AppConstants.spacing24),
+          SizedBox(
+            height: 56,
+            child: CustomButton(
+              text: contactState.isLoading ? 'Sending...' : 'Send Message',
+              icon: contactState.isLoading ? null : Icons.send,
+              isLoading: contactState.isLoading,
+              onPressed: contactState.isLoading ? null : onSubmit,
+            ),
           ),
         ],
       ),
@@ -228,8 +254,10 @@ class _SocialLinks extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final cardPadding = ResponsiveUtils.getCardPadding(context);
+    
     return GlassContainer(
-      padding: const EdgeInsets.all(32),
+      padding: EdgeInsets.all(cardPadding * 1.5),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -239,42 +267,35 @@ class _SocialLinks extends StatelessWidget {
                   fontWeight: FontWeight.bold,
                 ),
           ),
-          const SizedBox(height: 24),
+          SizedBox(height: AppConstants.spacing24),
           _ContactInfo(
             icon: Icons.email,
             label: 'Email',
             value: 'ayushrajavat2018@gmail.com',
             onTap: () => onLaunchUrl('mailto:ayushrajavat2018@gmail.com'),
           ),
-          const SizedBox(height: 16),
-          _ContactInfo(
-            icon: Icons.phone,
-            label: 'Phone',
-            value: '+91 9795840010',
-            onTap: () => onLaunchUrl('tel:+919795840010'),
-          ),
-          const SizedBox(height: 16),
+          SizedBox(height: AppConstants.spacing16),
           _ContactInfo(
             icon: Icons.location_on,
             label: 'Location',
             value: 'Kanpur, India',
             onTap: null,
           ),
-          const SizedBox(height: 32),
+          SizedBox(height: AppConstants.spacing32),
           Text(
             'Connect with me',
             style: Theme.of(context).textTheme.titleLarge?.copyWith(
                   fontWeight: FontWeight.bold,
                 ),
           ),
-          const SizedBox(height: 24),
+          SizedBox(height: AppConstants.spacing24),
           _SocialLink(
             icon: FontAwesomeIcons.linkedin,
             label: 'LinkedIn',
             url: 'https://www.linkedin.com/in/ayush-singh-3a0ab2165/',
             onTap: () => onLaunchUrl('https://www.linkedin.com/in/ayush-singh-3a0ab2165/'),
           ),
-          const SizedBox(height: 16),
+          SizedBox(height: AppConstants.spacing12),
           _SocialLink(
             icon: FontAwesomeIcons.github,
             label: 'GitHub',
@@ -287,7 +308,7 @@ class _SocialLinks extends StatelessWidget {
   }
 }
 
-class _ContactInfo extends StatelessWidget {
+class _ContactInfo extends StatefulWidget {
   final IconData icon;
   final String label;
   final String value;
@@ -301,50 +322,78 @@ class _ContactInfo extends StatelessWidget {
   });
 
   @override
+  State<_ContactInfo> createState() => _ContactInfoState();
+}
+
+class _ContactInfoState extends State<_ContactInfo> {
+  bool _isHovered = false;
+
+  @override
   Widget build(BuildContext context) {
-    final widget = Padding(
+    final content = Padding(
       padding: const EdgeInsets.all(12),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Icon(icon, color: AppColors.primary, size: 24),
-          const SizedBox(width: 16),
+          Icon(widget.icon, color: AppColors.primary, size: 24),
+          SizedBox(width: AppConstants.spacing16),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  label,
+                  widget.label,
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
                         color: AppColors.textSecondary,
                       ),
                 ),
-                const SizedBox(height: 4),
+                SizedBox(height: AppConstants.spacing4),
                 Text(
-                  value,
+                  widget.value,
                   style: Theme.of(context).textTheme.bodyLarge,
                 ),
               ],
             ),
           ),
-          if (onTap != null)
-            const Icon(Icons.arrow_forward_ios, size: 16, color: AppColors.textSecondary),
+          if (widget.onTap != null)
+            Icon(Icons.arrow_forward_ios, size: 16, color: AppColors.textSecondary),
         ],
       ),
     );
 
-    if (onTap != null) {
-      return InkWell(
-        onTap: onTap,
-        borderRadius: BorderRadius.circular(8),
-        child: widget,
+    if (widget.onTap != null) {
+      return MouseRegion(
+        onEnter: (_) {
+          if (ResponsiveUtils.supportsHover(context)) {
+            setState(() => _isHovered = true);
+          }
+        },
+        onExit: (_) {
+          if (ResponsiveUtils.supportsHover(context)) {
+            setState(() => _isHovered = false);
+          }
+        },
+        child: GestureDetector(
+          onTap: widget.onTap,
+          child: AnimatedContainer(
+            duration: AppConstants.animationFast,
+            decoration: BoxDecoration(
+              color: _isHovered
+                  ? AppColors.primary.withOpacity(0.05)
+                  : Colors.transparent,
+              borderRadius: BorderRadius.circular(8),
+            ),
+            transform: Matrix4.identity()..scale(_isHovered ? 1.02 : 1.0),
+            child: content,
+          ),
+        ),
       );
     }
-    return widget;
+    return content;
   }
 }
 
-class _SocialLink extends StatelessWidget {
+class _SocialLink extends StatefulWidget {
   final IconData icon;
   final String label;
   final String url;
@@ -358,23 +407,51 @@ class _SocialLink extends StatelessWidget {
   });
 
   @override
+  State<_SocialLink> createState() => _SocialLinkState();
+}
+
+class _SocialLinkState extends State<_SocialLink> {
+  bool _isHovered = false;
+
+  @override
   Widget build(BuildContext context) {
-    return InkWell(
-      onTap: onTap,
-      borderRadius: BorderRadius.circular(8),
-      child: Padding(
-        padding: const EdgeInsets.all(12),
-        child: Row(
-          children: [
-            Icon(icon, color: AppColors.primary, size: 24),
-            const SizedBox(width: 16),
-            Text(
-              label,
-              style: Theme.of(context).textTheme.bodyLarge,
+    return MouseRegion(
+      onEnter: (_) {
+        if (ResponsiveUtils.supportsHover(context)) {
+          setState(() => _isHovered = true);
+        }
+      },
+      onExit: (_) {
+        if (ResponsiveUtils.supportsHover(context)) {
+          setState(() => _isHovered = false);
+        }
+      },
+      child: GestureDetector(
+        onTap: widget.onTap,
+        child: AnimatedContainer(
+          duration: AppConstants.animationFast,
+          decoration: BoxDecoration(
+            color: _isHovered
+                ? AppColors.primary.withOpacity(0.05)
+                : Colors.transparent,
+            borderRadius: BorderRadius.circular(8),
+          ),
+          transform: Matrix4.identity()..scale(_isHovered ? 1.02 : 1.0),
+          child: Padding(
+            padding: const EdgeInsets.all(12),
+            child: Row(
+              children: [
+                Icon(widget.icon, color: AppColors.primary, size: 24),
+                SizedBox(width: AppConstants.spacing16),
+                Text(
+                  widget.label,
+                  style: Theme.of(context).textTheme.bodyLarge,
+                ),
+                const Spacer(),
+                Icon(Icons.arrow_forward_ios, size: 16, color: AppColors.textSecondary),
+              ],
             ),
-            const Spacer(),
-            const Icon(Icons.arrow_forward_ios, size: 16, color: AppColors.textSecondary),
-          ],
+          ),
         ),
       ),
     );

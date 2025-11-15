@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'dart:ui';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import '../../../../core/constants/responsive_utils.dart';
 import '../../../../core/constants/app_constants.dart';
+import '../../../../core/theme/app_colors.dart';
 import 'widgets/hero_section.dart';
 import '../../skills/presentation/widgets/skills_section.dart';
 import '../../projects/presentation/widgets/projects_section.dart';
@@ -25,8 +27,8 @@ class HomeScreen extends HookWidget {
       if (context != null) {
         Scrollable.ensureVisible(
           context,
-          duration: AppConstants.scrollDuration,
-          curve: Curves.easeInOut,
+          duration: AppConstants.animationVerySlow,
+          curve: Curves.easeInOutCubic,
         );
       }
     }
@@ -90,42 +92,82 @@ class _NavBar extends HookWidget {
       left: 0,
       right: 0,
       child: SafeArea(
-        child: Container(
-          padding: EdgeInsets.symmetric(
-            horizontal: ResponsiveUtils.getPadding(context),
-            vertical: 16,
-          ),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                AppConstants.appName,
-                style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                      fontWeight: FontWeight.bold,
-                    ),
+        child: ClipRRect(
+          child: BackdropFilter(
+            filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
+            child: Container(
+              height: 64,
+              padding: EdgeInsets.symmetric(
+                horizontal: ResponsiveUtils.getPadding(context),
               ),
-              if (ResponsiveUtils.isDesktop(context))
-                Row(
-                  children: [
-                    _NavItem(text: 'Home', onTap: onHomeTap),
-                    _NavItem(text: 'Skills', onTap: onSkillsTap),
-                    _NavItem(text: 'Projects', onTap: onProjectsTap),
-                    _NavItem(text: 'Experience', onTap: onExperienceTap),
-                    _NavItem(text: 'Contact', onTap: onContactTap),
-                  ],
-                )
-              else
-                PopupMenuButton(
-                  icon: const Icon(Icons.menu),
-                  itemBuilder: (context) => [
-                    PopupMenuItem(child: TextButton(onPressed: onHomeTap, child: const Text('Home'))),
-                    PopupMenuItem(child: TextButton(onPressed: onSkillsTap, child: const Text('Skills'))),
-                    PopupMenuItem(child: TextButton(onPressed: onProjectsTap, child: const Text('Projects'))),
-                    PopupMenuItem(child: TextButton(onPressed: onExperienceTap, child: const Text('Experience'))),
-                    PopupMenuItem(child: TextButton(onPressed: onContactTap, child: const Text('Contact'))),
-                  ],
-                ),
-            ],
+              decoration: BoxDecoration(
+                color: AppColors.glassBackground.withOpacity(0.3),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.1),
+                    blurRadius: 20,
+                    offset: const Offset(0, 4),
+                  ),
+                ],
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    AppConstants.appName,
+                    style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                          fontWeight: FontWeight.bold,
+                        ),
+                  ),
+                  if (ResponsiveUtils.isDesktop(context))
+                    Row(
+                      children: [
+                        _NavItem(text: 'Home', onTap: onHomeTap),
+                        _NavItem(text: 'Skills', onTap: onSkillsTap),
+                        _NavItem(text: 'Projects', onTap: onProjectsTap),
+                        _NavItem(text: 'Experience', onTap: onExperienceTap),
+                        _NavItem(text: 'Contact', onTap: onContactTap),
+                      ],
+                    )
+                  else
+                    PopupMenuButton(
+                      icon: const Icon(Icons.menu, color: AppColors.textPrimary),
+                      itemBuilder: (context) => [
+                        PopupMenuItem(
+                          child: TextButton(
+                            onPressed: onHomeTap,
+                            child: const Text('Home'),
+                          ),
+                        ),
+                        PopupMenuItem(
+                          child: TextButton(
+                            onPressed: onSkillsTap,
+                            child: const Text('Skills'),
+                          ),
+                        ),
+                        PopupMenuItem(
+                          child: TextButton(
+                            onPressed: onProjectsTap,
+                            child: const Text('Projects'),
+                          ),
+                        ),
+                        PopupMenuItem(
+                          child: TextButton(
+                            onPressed: onExperienceTap,
+                            child: const Text('Experience'),
+                          ),
+                        ),
+                        PopupMenuItem(
+                          child: TextButton(
+                            onPressed: onContactTap,
+                            child: const Text('Contact'),
+                          ),
+                        ),
+                      ],
+                    ),
+                ],
+              ),
+            ),
           ),
         ),
       ),
@@ -133,21 +175,60 @@ class _NavBar extends HookWidget {
   }
 }
 
-class _NavItem extends StatelessWidget {
+class _NavItem extends StatefulWidget {
   final String text;
   final VoidCallback onTap;
 
   const _NavItem({required this.text, required this.onTap});
 
   @override
+  State<_NavItem> createState() => _NavItemState();
+}
+
+class _NavItemState extends State<_NavItem> {
+  bool _isHovered = false;
+
+  @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
-      child: TextButton(
-        onPressed: onTap,
-        child: Text(
-          text,
-          style: Theme.of(context).textTheme.bodyLarge,
+    return MouseRegion(
+      onEnter: (_) => setState(() => _isHovered = true),
+      onExit: (_) => setState(() => _isHovered = false),
+      child: GestureDetector(
+        onTap: widget.onTap,
+        child: AnimatedContainer(
+          duration: AppConstants.animationFast,
+          padding: EdgeInsets.symmetric(horizontal: AppConstants.spacing24),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                widget.text,
+                style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                      color: _isHovered
+                          ? AppColors.primary
+                          : AppColors.textSecondary,
+                      fontWeight: FontWeight.w600,
+                    ) ??
+                    TextStyle(
+                      fontSize: AppConstants.fontSizeMedium,
+                      color: _isHovered
+                          ? AppColors.primary
+                          : AppColors.textSecondary,
+                      fontWeight: FontWeight.w600,
+                    ),
+              ),
+              SizedBox(height: AppConstants.spacing4),
+              AnimatedContainer(
+                duration: AppConstants.animationFast,
+                height: 2,
+                width: _isHovered ? 30 : 0,
+                decoration: BoxDecoration(
+                  color: AppColors.primary,
+                  borderRadius: BorderRadius.circular(1),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

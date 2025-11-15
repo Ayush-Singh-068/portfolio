@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../../../core/widgets/animated_section.dart';
 import '../../../../core/constants/responsive_utils.dart';
+import '../../../../core/constants/app_constants.dart';
 import '../../../../data/experience_data.dart';
 import 'timeline_item.dart';
 
@@ -9,25 +10,30 @@ class ExperienceSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final padding = ResponsiveUtils.getPadding(context);
-    
-    return Container(
-      width: double.infinity,
-      padding: EdgeInsets.symmetric(horizontal: padding, vertical: 80),
-      child: AnimatedSection(
-        id: 'experience',
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              'Experience',
-              style: Theme.of(context).textTheme.displaySmall,
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        return Container(
+          width: double.infinity,
+          padding: EdgeInsets.symmetric(
+            horizontal: ResponsiveUtils.getPadding(context),
+            vertical: ResponsiveUtils.getSectionPadding(context),
+          ),
+          child: AnimatedSection(
+            id: 'experience',
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Experience',
+                  style: Theme.of(context).textTheme.displaySmall,
+                ),
+                SizedBox(height: AppConstants.spacing48),
+                _Timeline(),
+              ],
             ),
-            const SizedBox(height: 48),
-            _Timeline(),
-          ],
-        ),
-      ),
+          ),
+        );
+      },
     );
   }
 }

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../../../core/widgets/animated_section.dart';
 import '../../../../core/constants/responsive_utils.dart';
+import '../../../../core/constants/app_constants.dart';
 import '../../../../data/projects_data.dart';
 import 'project_card.dart';
 
@@ -9,25 +10,30 @@ class ProjectsSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final padding = ResponsiveUtils.getPadding(context);
-    
-    return Container(
-      width: double.infinity,
-      padding: EdgeInsets.symmetric(horizontal: padding, vertical: 80),
-      child: AnimatedSection(
-        id: 'projects',
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              'Projects',
-              style: Theme.of(context).textTheme.displaySmall,
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        return Container(
+          width: double.infinity,
+          padding: EdgeInsets.symmetric(
+            horizontal: ResponsiveUtils.getPadding(context),
+            vertical: ResponsiveUtils.getSectionPadding(context),
+          ),
+          child: AnimatedSection(
+            id: 'projects',
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Projects',
+                  style: Theme.of(context).textTheme.displaySmall,
+                ),
+                SizedBox(height: AppConstants.spacing48),
+                _ProjectsList(),
+              ],
             ),
-            const SizedBox(height: 48),
-            _ProjectsList(),
-          ],
-        ),
-      ),
+          ),
+        );
+      },
     );
   }
 }
@@ -35,20 +41,31 @@ class ProjectsSection extends StatelessWidget {
 class _ProjectsList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final crossAxisCount = ResponsiveUtils.getCrossAxisCount(context);
-    
     return GridView.builder(
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: crossAxisCount,
-        crossAxisSpacing: 24,
-        mainAxisSpacing: 24,
-        childAspectRatio: ResponsiveUtils.isMobile(context) ? 0.85 : 0.75,
+        crossAxisCount: ResponsiveUtils.getCrossAxisCount(context),
+        crossAxisSpacing: ResponsiveUtils.getGridSpacing(context),
+        mainAxisSpacing: ResponsiveUtils.getGridSpacing(context),
+        childAspectRatio: ResponsiveUtils.getCardAspectRatio(context),
       ),
       itemCount: ProjectsData.projects.length,
       itemBuilder: (context, index) {
-        return ProjectCard(project: ProjectsData.projects[index]);
+        return TweenAnimationBuilder<double>(
+          duration: Duration(milliseconds: 300 + (index * 100)),
+          tween: Tween<double>(begin: 0, end: 1),
+          curve: Curves.easeOutCubic,
+          builder: (context, value, child) {
+            return Opacity(
+              opacity: value,
+              child: Transform.translate(
+                offset: Offset(0, 30 * (1 - value)),
+                child: ProjectCard(project: ProjectsData.projects[index]),
+              ),
+            );
+          },
+        );
       },
     );
   }

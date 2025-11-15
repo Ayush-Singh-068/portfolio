@@ -1,60 +1,109 @@
 import 'package:flutter/material.dart';
 import '../theme/app_colors.dart';
+import '../constants/app_constants.dart';
+import '../constants/responsive_utils.dart';
 
-class CustomButton extends StatelessWidget {
+class CustomButton extends StatefulWidget {
   final String text;
+  final IconData? icon;
   final VoidCallback? onPressed;
   final bool isOutlined;
-  final IconData? icon;
+  final bool isLoading;
 
   const CustomButton({
     super.key,
     required this.text,
+    this.icon,
     this.onPressed,
     this.isOutlined = false,
-    this.icon,
+    this.isLoading = false,
   });
 
   @override
-  Widget build(BuildContext context) {
-    final buttonContent = Row(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        if (icon != null) ...[
-          Icon(icon, size: 18),
-          const SizedBox(width: 8),
-        ],
-        Text(text),
-      ],
-    );
+  State<CustomButton> createState() => _CustomButtonState();
+}
 
-    if (isOutlined) {
-      return OutlinedButton(
-        onPressed: onPressed,
-        style: OutlinedButton.styleFrom(
-          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-          side: const BorderSide(color: AppColors.primary, width: 2),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(8),
+class _CustomButtonState extends State<CustomButton> {
+  bool _isPressed = false;
+
+  @override
+  Widget build(BuildContext context) {
+    final isDesktop = ResponsiveUtils.isDesktop(context);
+    final height = isDesktop ? 48.0 : 44.0;
+
+    return GestureDetector(
+      onTapDown: (_) => setState(() => _isPressed = true),
+      onTapUp: (_) => setState(() => _isPressed = false),
+      onTapCancel: () => setState(() => _isPressed = false),
+      onTap: widget.onPressed,
+      child: AnimatedContainer(
+        duration: AppConstants.animationFast,
+        curve: Curves.easeOut,
+        transform: Matrix4.identity()..scale(_isPressed ? 0.98 : 1.0),
+        child: Container(
+          height: height,
+          padding: EdgeInsets.symmetric(horizontal: AppConstants.spacing20),
+          decoration: BoxDecoration(
+            gradient: widget.isOutlined
+                ? null
+                : LinearGradient(
+                    colors: [AppColors.primary, AppColors.secondary],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                  ),
+            color: widget.isOutlined ? Colors.transparent : null,
+            borderRadius: BorderRadius.circular(AppConstants.radiusMedium),
+            border: widget.isOutlined
+                ? Border.all(
+                    color: AppColors.primary,
+                    width: 1.5,
+                  )
+                : null,
+            boxShadow: widget.isOutlined
+                ? null
+                : [
+                    BoxShadow(
+                      color: AppColors.primary.withOpacity(0.3),
+                      blurRadius: 12,
+                      offset: const Offset(0, 4),
+                    ),
+                  ],
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              if (widget.isLoading)
+                SizedBox(
+                  width: 18,
+                  height: 18,
+                  child: CircularProgressIndicator(
+                    strokeWidth: 2,
+                    valueColor: AlwaysStoppedAnimation(
+                      widget.isOutlined ? AppColors.primary : Colors.white,
+                    ),
+                  ),
+                )
+              else if (widget.icon != null) ...[
+                Icon(
+                  widget.icon,
+                  size: 18,
+                  color: widget.isOutlined ? AppColors.primary : Colors.white,
+                ),
+                SizedBox(width: AppConstants.spacing8),
+              ],
+              Text(
+                widget.text,
+                style: TextStyle(
+                  fontSize: AppConstants.fontSizeMedium,
+                  fontWeight: FontWeight.w600,
+                  color: widget.isOutlined ? AppColors.primary : Colors.white,
+                ),
+              ),
+            ],
           ),
         ),
-        child: buttonContent,
-      );
-    }
-
-    return ElevatedButton(
-      onPressed: onPressed,
-      style: ElevatedButton.styleFrom(
-        backgroundColor: AppColors.primary,
-        foregroundColor: Colors.white,
-        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(8),
-        ),
-        elevation: 0,
       ),
-      child: buttonContent,
     );
   }
 }
-
