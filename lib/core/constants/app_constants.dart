@@ -56,9 +56,24 @@ class AppConstants {
   static const Duration animationNormal = Duration(milliseconds: 300);
   static const Duration animationSlow = Duration(milliseconds: 500);
   static const Duration animationVerySlow = Duration(milliseconds: 800);
+  static const Duration animationSpring = Duration(milliseconds: 400);
+  
+  // Animation Delays
+  static const Duration staggerDelay = Duration(milliseconds: 100);
+  static const Duration textRevealDelay = Duration(milliseconds: 50);
+  
+  // Animation Offsets
+  static const double revealOffset = 60.0;
+  static const double smallRevealOffset = 30.0;
   
 // Animation Curves (Note: Cannot be const, use directly in code)
-// Use: Curves.easeInOutCubic, Curves.easeOut, Curves.easeIn
+// Modern easing curves for premium feel:
+// - Curves.easeOutExpo (fast start, slow end)
+// - Curves.easeInOutCubic (smooth both ways)
+// - Curves.easeOutBack (bouncy exit)
+// - Curves.easeInOutBack (bouncy both ways)
+// - Curves.elasticOut (spring-like)
+// - Curves.fastOutSlowIn (Material Design default)
   
   // Legacy (keeping for backward compatibility)
   static const Duration animationDuration = animationNormal;

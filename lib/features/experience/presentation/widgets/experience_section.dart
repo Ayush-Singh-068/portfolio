@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../../../core/widgets/animated_section.dart';
+import '../../../../core/widgets/animated_text_reveal.dart';
+import '../../../../core/widgets/scroll_reveal_animation.dart';
 import '../../../../core/constants/responsive_utils.dart';
 import '../../../../core/constants/app_constants.dart';
 import '../../../../data/experience_data.dart';
@@ -20,12 +22,19 @@ class ExperienceSection extends StatelessWidget {
           ),
           child: AnimatedSection(
             id: 'experience',
+            direction: RevealDirection.fade,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  'Experience',
-                  style: Theme.of(context).textTheme.displaySmall,
+                AnimatedTextReveal(
+                  text: 'Experience',
+                  type: TextRevealType.slideIn,
+                  delay: const Duration(milliseconds: 200),
+                  duration: AppConstants.animationNormal,
+                  style: Theme.of(context).textTheme.displaySmall?.copyWith(
+                        fontWeight: FontWeight.w800,
+                        letterSpacing: -0.5,
+                      ),
                 ),
                 SizedBox(height: AppConstants.spacing48),
                 _Timeline(),
@@ -44,9 +53,13 @@ class _Timeline extends StatelessWidget {
     return Column(
       children: [
         for (int i = 0; i < ExperienceData.experiences.length; i++) ...[
-          TimelineItem(
-            experience: ExperienceData.experiences[i],
-            isLast: i == ExperienceData.experiences.length - 1,
+          StaggeredReveal(
+            index: i,
+            direction: RevealDirection.left,
+            child: TimelineItem(
+              experience: ExperienceData.experiences[i],
+              isLast: i == ExperienceData.experiences.length - 1,
+            ),
           ),
         ],
       ],

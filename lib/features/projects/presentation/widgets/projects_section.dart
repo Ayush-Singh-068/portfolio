@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../../../core/widgets/animated_section.dart';
+import '../../../../core/widgets/animated_text_reveal.dart';
+import '../../../../core/widgets/scroll_reveal_animation.dart';
 import '../../../../core/constants/responsive_utils.dart';
 import '../../../../core/constants/app_constants.dart';
 import '../../../../data/projects_data.dart';
@@ -20,12 +22,19 @@ class ProjectsSection extends StatelessWidget {
           ),
           child: AnimatedSection(
             id: 'projects',
+            direction: RevealDirection.fade,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  'Projects',
-                  style: Theme.of(context).textTheme.displaySmall,
+                AnimatedTextReveal(
+                  text: 'Projects',
+                  type: TextRevealType.slideIn,
+                  delay: const Duration(milliseconds: 200),
+                  duration: AppConstants.animationNormal,
+                  style: Theme.of(context).textTheme.displaySmall?.copyWith(
+                        fontWeight: FontWeight.w800,
+                        letterSpacing: -0.5,
+                      ),
                 ),
                 SizedBox(height: AppConstants.spacing48),
                 _ProjectsList(),
@@ -52,19 +61,10 @@ class _ProjectsList extends StatelessWidget {
       ),
       itemCount: ProjectsData.projects.length,
       itemBuilder: (context, index) {
-        return TweenAnimationBuilder<double>(
-          duration: Duration(milliseconds: 300 + (index * 100)),
-          tween: Tween<double>(begin: 0, end: 1),
-          curve: Curves.easeOutCubic,
-          builder: (context, value, child) {
-            return Opacity(
-              opacity: value,
-              child: Transform.translate(
-                offset: Offset(0, 30 * (1 - value)),
-                child: ProjectCard(project: ProjectsData.projects[index]),
-              ),
-            );
-          },
+        return StaggeredReveal(
+          index: index,
+          direction: RevealDirection.up,
+          child: ProjectCard(project: ProjectsData.projects[index]),
         );
       },
     );

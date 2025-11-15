@@ -20,27 +20,41 @@ class _ProjectCardState extends State<ProjectCard>
     with SingleTickerProviderStateMixin {
   bool _isExpanded = false;
   bool _isHovered = false;
-  late AnimationController _animationController;
+  late AnimationController _hoverController;
   late Animation<double> _scaleAnimation;
+  late Animation<double> _elevationAnimation;
+  late Animation<double> _glowAnimation;
 
   @override
   void initState() {
     super.initState();
-    _animationController = AnimationController(
+    _hoverController = AnimationController(
       duration: AppConstants.animationNormal,
       vsync: this,
     );
-    _scaleAnimation = Tween<double>(begin: 1.0, end: 1.02).animate(
+    _scaleAnimation = Tween<double>(begin: 1.0, end: 1.03).animate(
       CurvedAnimation(
-        parent: _animationController,
-        curve: Curves.easeInOutCubic,
+        parent: _hoverController,
+        curve: Curves.easeOutCubic,
+      ),
+    );
+    _elevationAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(
+        parent: _hoverController,
+        curve: Curves.easeOutCubic,
+      ),
+    );
+    _glowAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(
+        parent: _hoverController,
+        curve: Curves.easeOutCubic,
       ),
     );
   }
 
   @override
   void dispose() {
-    _animationController.dispose();
+    _hoverController.dispose();
     super.dispose();
   }
 
@@ -71,23 +85,47 @@ class _ProjectCardState extends State<ProjectCard>
       onEnter: (_) {
         if (ResponsiveUtils.supportsHover(context)) {
           setState(() => _isHovered = true);
-          _animationController.forward();
+          _hoverController.forward();
         }
       },
       onExit: (_) {
         if (ResponsiveUtils.supportsHover(context)) {
           setState(() => _isHovered = false);
-          _animationController.reverse();
+          _hoverController.reverse();
         }
       },
-      child: ScaleTransition(
-        scale: _scaleAnimation,
-        child: AnimatedContainer(
-          duration: AppConstants.animationNormal,
-          curve: Curves.easeInOutCubic,
-          transform: Matrix4.translationValues(0, _isHovered ? -8 : 0, 0),
-            child: GlassContainer(
-            padding: EdgeInsets.all(cardPadding),
+      child: AnimatedBuilder(
+        animation: _hoverController,
+        builder: (context, child) {
+          return Transform(
+            transform: Matrix4.identity()
+              ..setEntry(3, 2, 0.001) // Perspective
+              ..rotateX(_isHovered ? -0.03 : 0.0)
+              ..rotateY(_isHovered ? 0.02 : 0.0)
+              ..translate(0.0, -12.0 * _elevationAnimation.value),
+            alignment: Alignment.center,
+            child: Transform.scale(
+              scale: _scaleAnimation.value,
+              child: Container(
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(AppConstants.radiusLarge),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.white.withOpacity(0.08 * _glowAnimation.value),
+                      blurRadius: 25 * _glowAnimation.value,
+                      spreadRadius: 0,
+                      offset: Offset(0, 12 * _elevationAnimation.value),
+                    ),
+                    BoxShadow(
+                      color: AppColors.primary.withOpacity(0.15 * _glowAnimation.value),
+                      blurRadius: 20 * _glowAnimation.value,
+                      spreadRadius: -5,
+                      offset: Offset(0, 8 * _elevationAnimation.value),
+                    ),
+                  ],
+                ),
+                child: GlassContainer(
+                  padding: EdgeInsets.all(cardPadding),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisSize: MainAxisSize.min,
@@ -174,8 +212,11 @@ class _ProjectCardState extends State<ProjectCard>
                   ),
               ],
             ),
-          ),
-        ),
+                ),
+              ),
+            ),
+          );
+        },
       ),
     );
   }

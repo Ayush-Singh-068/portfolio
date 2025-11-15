@@ -4,6 +4,10 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import '../../../../core/widgets/animated_section.dart';
+import '../../../../core/widgets/animated_text_reveal.dart';
+import '../../../../core/widgets/animated_entrance.dart';
+import '../../../../core/widgets/scroll_reveal_animation.dart';
+import '../../../../core/widgets/animated_text_field.dart';
 import '../../../../core/widgets/glass_container.dart';
 import '../../../../core/widgets/custom_button.dart';
 import '../../../../core/constants/responsive_utils.dart';
@@ -49,12 +53,19 @@ class ContactSection extends HookConsumerWidget {
           ),
           child: AnimatedSection(
             id: 'contact',
+            direction: RevealDirection.fade,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  'Contact',
-                  style: Theme.of(context).textTheme.displaySmall,
+                AnimatedTextReveal(
+                  text: 'Contact',
+                  type: TextRevealType.slideIn,
+                  delay: const Duration(milliseconds: 200),
+                  duration: AppConstants.animationNormal,
+                  style: Theme.of(context).textTheme.displaySmall?.copyWith(
+                        fontWeight: FontWeight.w800,
+                        letterSpacing: -0.5,
+                      ),
                 ),
                 SizedBox(height: AppConstants.spacing48),
             Row(
@@ -124,83 +135,32 @@ class _ContactForm extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          SizedBox(
-            height: 56,
-            child: TextField(
-              controller: nameController,
-              onChanged: onNameChanged,
-              style: TextStyle(color: AppColors.textPrimary),
-              decoration: InputDecoration(
-                labelText: 'Name',
-                labelStyle: TextStyle(color: AppColors.textSecondary),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(AppConstants.radiusMedium),
-                  borderSide: BorderSide(color: AppColors.surfaceLight, width: 1.5),
-                ),
-                enabledBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(AppConstants.radiusMedium),
-                  borderSide: BorderSide(color: AppColors.surfaceLight, width: 1.5),
-                ),
-                focusedBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(AppConstants.radiusMedium),
-                  borderSide: BorderSide(color: AppColors.primary, width: 2),
-                ),
-              ),
-            ),
+          AnimatedTextField(
+            controller: nameController,
+            labelText: 'Name',
+            onChanged: onNameChanged,
           ),
-          SizedBox(height: AppConstants.spacing16),
-          SizedBox(
-            height: 56,
-            child: TextField(
-              controller: emailController,
-              onChanged: onEmailChanged,
-              keyboardType: TextInputType.emailAddress,
-              style: TextStyle(color: AppColors.textPrimary),
-              decoration: InputDecoration(
-                labelText: 'Email',
-                labelStyle: TextStyle(color: AppColors.textSecondary),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(AppConstants.radiusMedium),
-                  borderSide: BorderSide(color: AppColors.surfaceLight, width: 1.5),
-                ),
-                enabledBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(AppConstants.radiusMedium),
-                  borderSide: BorderSide(color: AppColors.surfaceLight, width: 1.5),
-                ),
-                focusedBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(AppConstants.radiusMedium),
-                  borderSide: BorderSide(color: AppColors.primary, width: 2),
-                ),
-              ),
-            ),
+          SizedBox(height: AppConstants.spacing20),
+          AnimatedTextField(
+            controller: emailController,
+            labelText: 'Email',
+            keyboardType: TextInputType.emailAddress,
+            onChanged: onEmailChanged,
           ),
-          SizedBox(height: AppConstants.spacing16),
-          TextField(
+          SizedBox(height: AppConstants.spacing20),
+          AnimatedTextField(
             controller: messageController,
-            onChanged: onMessageChanged,
+            labelText: 'Message',
             maxLines: 6,
-            style: TextStyle(color: AppColors.textPrimary),
-            decoration: InputDecoration(
-              labelText: 'Message',
-              labelStyle: TextStyle(color: AppColors.textSecondary),
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(AppConstants.radiusMedium),
-                borderSide: BorderSide(color: AppColors.surfaceLight, width: 1.5),
-              ),
-              enabledBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(AppConstants.radiusMedium),
-                borderSide: BorderSide(color: AppColors.surfaceLight, width: 1.5),
-              ),
-              focusedBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(AppConstants.radiusMedium),
-                borderSide: BorderSide(color: AppColors.primary, width: 2),
-              ),
-            ),
+            onChanged: onMessageChanged,
           ),
           if (contactState.error != null) ...[
             const SizedBox(height: 16),
-            Text(
-              contactState.error!,
+            AnimatedTextReveal(
+              text: contactState.error!,
+              type: TextRevealType.slideIn,
+              delay: Duration.zero,
+              duration: AppConstants.animationNormal,
               style: Theme.of(context).textTheme.bodySmall?.copyWith(
                     color: AppColors.error,
                   ),
@@ -208,26 +168,39 @@ class _ContactForm extends StatelessWidget {
           ],
           if (contactState.isSuccess) ...[
             const SizedBox(height: 16),
-            Container(
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                color: AppColors.success.withOpacity(0.2),
-                borderRadius: BorderRadius.circular(8),
-                border: Border.all(color: AppColors.success),
-              ),
-              child: Row(
-                children: [
-                  const Icon(Icons.check_circle, color: AppColors.success),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: Text(
-                      'Message sent successfully!',
-                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                            color: AppColors.success,
-                          ),
+            AnimatedEntrance(
+              type: EntranceType.slideInBottom,
+              delay: Duration.zero,
+              duration: AppConstants.animationNormal,
+              child: Container(
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: AppColors.success.withOpacity(0.2),
+                  borderRadius: BorderRadius.circular(AppConstants.radiusMedium),
+                  border: Border.all(color: AppColors.success, width: 1.5),
+                  boxShadow: [
+                    BoxShadow(
+                      color: AppColors.success.withOpacity(0.2),
+                      blurRadius: 8,
+                      spreadRadius: 0,
                     ),
-                  ),
-                ],
+                  ],
+                ),
+                child: Row(
+                  children: [
+                    const Icon(Icons.check_circle, color: AppColors.success),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Text(
+                        'Message sent successfully!',
+                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                              color: AppColors.success,
+                              fontWeight: FontWeight.w600,
+                            ),
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
           ],
