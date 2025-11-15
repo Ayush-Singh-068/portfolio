@@ -1,11 +1,11 @@
 {
-    "name": "android_studio_projects",
-    "short_name": "android_studio_projects",
+    "name": "Ayush Portfolio",
+    "short_name": "Ayush Portfolio",
     "start_url": ".",
     "display": "standalone",
-    "background_color": "#0175C2",
-    "theme_color": "#0175C2",
-    "description": "This is a portfolio app",
+    "background_color": "#0A0E27",
+    "theme_color": "#6366F1",
+    "description": "Ayush Singh's Portfolio - Flutter Developer with 4+ years of experience",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [
